@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{isEditMode ? 'Edit' : 'Add'}} Car</h3>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()" #carForm="ngForm">
+            <div class="mb-3">
+              <label for="model" class="form-label">Model</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="model" 
+                name="model" 
+                [(ngModel)]="car.model" 
+                required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="type" class="form-label">Type</label>
+              <select class="form-control" id="type" name="type" [(ngModel)]="car.type" required>
+                <option value="">Select Type</option>
+                <option value="SUV">SUV</option>
+                <option value="Sedan">Sedan</option>
+                <option value="Sports Car">Sports Car</option>
+                <option value="Electric">Electric</option>
+                <option value="Truck">Truck</option>
+                <option value="Luxury Sedan">Luxury Sedan</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="plateNumber" class="form-label">Plate Number</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="plateNumber" 
+                name="plateNumber" 
+                [(ngModel)]="car.plateNumber" 
+                required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="clientId" class="form-label">Owner</label>
+              <select class="form-control" id="clientId" name="clientId" [(ngModel)]="car.clientId" required>
+                <option value="">Select Owner</option>
+                <option *ngFor="let client of clients" [value]="client.id">
+                  {{client.name}}
+                </option>
+              </select>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" routerLink="/cars">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!carForm.form.valid">
+                {{isEditMode ? 'Update' : 'Create'}}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
