@@ -1,0 +1,53 @@
+<div class="container mt-4">
+  <h2>Dashboard</h2>
+  
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Total Clients</div>
+        <div class="card-body">
+          <h5 class="card-title display-4">{{totalClients}}</h5>
+          <a routerLink="/clients" class="text-white">View all clients →</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">Total Cars</div>
+        <div class="card-body">
+          <h5 class="card-title display-4">{{totalCars}}</h5>
+          <a routerLink="/cars" class="text-white">View all cars →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Recent Clients</div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li *ngFor="let client of recentClients" class="list-group-item">
+              {{client.name}} (Age: {{client.age}})
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Recent Cars</div>
+        <div class="card-body">
+          <ul class="list-group">
+            <li *ngFor="let car of recentCars" class="list-group-item">
+              {{car.model}} - {{car.plateNumber}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

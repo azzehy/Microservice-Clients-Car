@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    container_name: eureka-server
+    restart: always
+    ports:
+      - "8761:8761"
+    build: ./eureka-server
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api-gateway:
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "8889:8889"
+    build: ./api-gateway
+    environment:
+      - EUREKA_SERVER=eureka-server
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  clients-service:
+    container_name: clients-service
+    restart: always
+    ports:
+      - "8081:8081"
+    build:
+      context: ./clients-service
+      dockerfile: Dockerfile
+    environment:
+      - EUREKA_SERVER=eureka-server
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/clientdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  cars-service:
+    container_name: cars-service
+    restart: always
+    ports:
+      - "8082:8082"
+    build:
+      context: ./cars-service
+      dockerfile: Dockerfile
+    environment:
+      - EUREKA_SERVER=eureka-server
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/carsdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - CLIENT_SERVICE_URL=http://clients-service:8089
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-data:
+    name: mysql-data
+
+networks:
+  app-network:
+    driver: bridge
