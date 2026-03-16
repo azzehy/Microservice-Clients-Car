@@ -20,7 +20,7 @@ public class CorsConfig {
         corsConfig.addAllowedHeader("*");
         corsConfig.setAllowCredentials(false);
 
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
 
         return new CorsFilter(source);
